@@ -1,0 +1,1 @@
+{data_dir: "data/snli", min_df: 5, max_vocab: 999999, max_len: 999, min_len: 1, lower_case: true, pretrained_embeddings: "resources/glove.840B.300d.txt", embedding_mode: "freq"}
