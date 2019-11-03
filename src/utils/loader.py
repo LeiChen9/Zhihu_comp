@@ -3,6 +3,10 @@ import numpy as np
 
 def load_data(data_dir, split=None):
     '''
+<<<<<<< HEAD
+    split: train, test, dev
+=======
+>>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
     return a list of dict
     dict: 
         'text1'
@@ -18,12 +22,22 @@ def load_data(data_dir, split=None):
         files = [os.path.join(data_dir, f'{split}')]
     for file in files:
         with open(file) as f:
+<<<<<<< HEAD
+            for line in f:
+                text1, text2, label = line.rstrip().split('\t')
+                data.append({
+                    'text1': text1,
+                    'text2': text2,
+                    'target': label
+                })
+=======
             text1, text2, label = line.rstrip().split('\t')
             data.append({
                 'text1': text1,
                 'text2': text2,
                 'target': label
             })
+>>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
     return data 
 
 def load_embeddings(file, vocab, dim, lower, mode='freq'):
@@ -32,7 +46,11 @@ def load_embeddings(file, vocab, dim, lower, mode='freq'):
     with open(file) as f:
         for line in f:
             elems = line.rstrip().split()
+<<<<<<< HEAD
+            if len(elems) != (dim+1):
+=======
             if len(elems) != dim + 1
+>>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
                 continue
             token = elems[0]
             if lower and mode != 'strict':
