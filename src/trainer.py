@@ -7,22 +7,32 @@ from datetime import datetime
 from pprint import pformat
 from .utils.loader import load_data
 from .utils.logger import Logger
-# from .utils.params import validate_params
-<<<<<<< HEAD
+from .utils.params import validate_params
 from .model import Model
 from .interface import Interface
-=======
-# from .model import Model
-# from .interface import Interface
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
 
 class Trainer:
+    """
+    __init__: Load args and define logger
+    
+    
+    train:
+        Split train and dev set;
+        Set up tf graph
+        build session
+        mode, interface, states = self.build_model(sess)
+
+
+    build_model:
+        states = {}
+        Define interface
+        model = Model(args, sess)
+    """
     def __init__(self, args):
         self.args = args
         self.log = Logger(self.args)
     
     def train(self):
-<<<<<<< HEAD
         # Setup train set and dev set
         start_time = datetime.now()
         train = load_data(self.args.data_dir, 'train')  # looks like 'data/snli/train.txt'
@@ -44,7 +54,7 @@ class Trainer:
     def build_model(self, sess):
         states = {}
         interface = Interface(self.args, self.log)
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         self.log(f'#classes: {self.args.num_classes}; #vocab: {self.args.num_vocab}')
         if self.args.seed:  # Set seed to random, np and tf
             random.seed(self.args.seed)
@@ -52,7 +62,7 @@ class Trainer:
             tf.set_random_seed(self.args.seed)
         
         model = Model(self.args, sess)
-=======
-        start_time = datetime.now()
-        train = load_data(self.args.data_dir, 'train')
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
+        import pdb; pdb.set_trace()
+        sess.run(tf.global_variables_initializer())
+        embeddings = interface.load_embeddings()
+        

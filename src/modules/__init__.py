@@ -12,7 +12,7 @@ def get_weight(shape, gain=np.sqrt(2), weight_norm=True, fan_in=None, name='weig
         fan_in = np.prod(shape[:-1])
     std = gain / np.sqrt(fan_in)
 
-    w = tf.get_variable(name, shape=shape, initializer=tf.initializer.random_normal(0, std),
+    w = tf.get_variable(name, shape=shape, initializer=tf.initializers.random_normal(0, std),
                         dtype=tf.float32)
     
     if weight_norm:
@@ -25,7 +25,7 @@ def get_weight(shape, gain=np.sqrt(2), weight_norm=True, fan_in=None, name='weig
 def apply_bias(x, name='bias'):
     b = tf.get_variable(name, shape=[x.get_shape()[-1]], initializer=tf.zeros_initializer)
     b = tf.cast(b, x.dtype)
-    b = tf.reshape(b, [1] * len(x.get_shape()[:-1]) + (x.get_shape().as_list()[-1]))
+    b = tf.reshape(b, [1] * len(x.get_shape()[:-1]) + [x.get_shape().as_list()[-1]])
     return x + b 
 
 def dense(x, units, activation=None, name='dense'):
@@ -45,13 +45,13 @@ def dense(x, units, activation=None, name='dense'):
     
 def conv1d(x, filters, kernel_size, activation=None, name='conv1d'):
     with tf.variable_scope(name):
-        gain = np.sqrt(2) is activation is tf.nn.relu else 1
+        gain = np.sqrt(2) if activation is tf.nn.relu else 1
         x = tf.expand_dims(x, 1)
         w = get_weight([kernel_size, x.shape[-1].value, filters], gain=gain)
         w = tf.expand_dims(w, 0)  #[1, shape(w)]
         out = tf.nn.conv2d(x, w, strides=[1, 1, 1, 1], padding='SAME')
         out = tf.squeeze(out, [1])  # delete the dims which are 1
-        out = tf.apply_bias(out)
+        out = apply_bias(out)
         if activation:
             out = activation(out)
         return out

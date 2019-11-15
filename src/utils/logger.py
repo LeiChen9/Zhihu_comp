@@ -18,7 +18,6 @@ Formatter 格式化器，指明了最终输出中日志记录的布局。
 '''
 
 class Logger:
-<<<<<<< HEAD
     """
     Logger to log the info into summary_dir in models dir
     handler:
@@ -31,8 +30,6 @@ class Logger:
         can call the logger itself to write down INFO level log
 
     """
-=======
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
     def __init__(self, args):
         log = logging.getLogger(args.summary_dir)  # build a logger
         # handler send log to appropriate output
@@ -60,11 +57,6 @@ class Logger:
         else:
             self.writer = None
             self.eval_writer = None
-<<<<<<< HEAD
-        # import pdb; pdb.set_trace()
-=======
-        import pdb; pdb.set_trace()
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
         self.log_per_updates = args.log_per_updates
         self.grad_clipping = args.grad_clipping
         self.clips = 0
@@ -79,25 +71,19 @@ class Logger:
 
     @staticmethod
     def _format_number(x):
-<<<<<<< HEAD
         """
         Formatting the float number
         """
-=======
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
         return f'{x: .4f}' if float(x) > 1e-3 else f'{x: .4e}'
     
     def update(self, stats):
         '''
         stats: model training info
-<<<<<<< HEAD
 
         if updates % log_per_updates == 0:
             add summary to log
             update clips
             add stats_str to log
-=======
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
         neet to be solved after implemented the model
         '''
         updates = stats.pop('updates')
@@ -120,12 +106,9 @@ class Logger:
         self.log.debug('')
     
     def log_eval(self, valid_stats):
-<<<<<<< HEAD
         """
         updates the new best eval to log
         """
-=======
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
         self.newline()
         updates = valid_stats.pop('updates')
         eval_score = valid_stats.pop('score')
@@ -144,11 +127,7 @@ class Logger:
         self.log.info(f'valid {valid_stats_str}')
         if self.eval_writer:
             for key in valid_stats.keys():
-<<<<<<< HEAD
                 group = {'valid': valid_stats[key]}
-=======
-                group = {'valid: ' valid_stats[key]}
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
                 if self.train_meters and key in self.train_meters:
                     group['train'] = float(self.train_meters[key])
                 self.eval_writer.add_scalars(f'valid/{key}', group, updates)

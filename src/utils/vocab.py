@@ -1,30 +1,26 @@
 from collections import Counter
 
 class Indexer:
-<<<<<<< HEAD
     """
     self.target_map = Indexer.build((sample['target'] for sample in data), log=log)
     """
-=======
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
     def __init__(self):
         self.w2id = {}
         self.id2w = {}
     
     @property
-    def n_spec(self):
+    def n_spec(self):  # threshold of minimim number of index
         return 0
     
     def __len__(self):  # make a object like a list. Like len(Indexer)
         return len(self.w2id)
     
-    def __getitem__(self, index):
+    def __getitem__(self, index):  # make a object like a dict. Like Indexer['key']
         if index not in self.id2w:
             raise IndexError(f'invalid index {index} in indices.')
         return self.id2w[index]
-<<<<<<< HEAD
     
-    def __contains__(self, item):
+    def __contains__(self, item):  # Used like: if key in Indexer()
         return item in self.w2id
     
     def index(self, symbol):
@@ -48,6 +44,7 @@ class Indexer:
         counter = Counter(symbols)
         symbols = sorted([t for t, c in counter.items() if c >= min_counts],
                             key=counter.get, reverse=True)
+        # import pdb; pdb.set_trace()
         log(f'''{len(symbols)} symbols found: {' '.join(symbols[:15]) + ('...' if len(symbols) > 15 else '')}''')
         filtered = sorted(list(counter.keys() - set(symbols)), key=counter.get, reverse=True)  # Appearance time less than 1
         if filtered:
@@ -109,6 +106,10 @@ class RobustIndexer(Indexer):
     @staticmethod
     def unk():
         return 0
+
+    @staticmethod
+    def unk_symbol():
+        return '<UNK>'
     
     def validate_spec(self):
         assert self.n_spec == len(self.w2id), f'{self.n_spec}, {len(self.w2id)}'
@@ -136,7 +137,7 @@ class Vocab(RobustIndexer):
         # wv_vocab: vocab in embeddings
 
         if lower:
-            words = (word.lower() for word in wrods)
+            words = (word.lower() for word in words)
         counter = Counter(words)
         candidate_tokens = sorted([t for t, c in counter.items() if t in wv_vocab or c >= min_df],
                                     key=counter.get, reverse=True)
@@ -153,14 +154,14 @@ class Vocab(RobustIndexer):
         
         # tokens: 
         
-        total = sum(counter.values)
+        total = sum(counter.values())
         matched = sum(counter[t] for t in tokens)
         stats = (len(tokens), len(counter), total - matched, total, (total - matched) / total * 100)
         log('vocab converge {}/{} | OOV occurrences {}/{} ({:.4}%)'.format(*stats))
-        tokens_set(tokens)
+        tokens_set= set(tokens)
         if pretrained_embeddings:
             oop_samples = sorted(list(tokens_set - wv_vocab), key=counter.get, reverse=True)
-            log('Covered by pretrained vectors {.4f}%. '.format(len(tokens_set & wv_vocab) / len(tokens) * 100)
+            log('Covered by pretrained vectors {:.4f}%. '.format(len(tokens_set & wv_vocab) / len(tokens) * 100)
                     + ('outside pretrained: ' + ' '.join(oop_samples[:10]) + ' ...' if len(oop_samples) > 10 else '')
                     if oop_samples else '')
         log('top words:\n{}'.format(' '.join(tokens[:10])))
@@ -225,12 +226,9 @@ class Vocab(RobustIndexer):
         reverse_char_map = {v: k for k, v in cls.char_map.items()}
         with open(file) as f:
             for line in f:
-                symbol = line.rsplit('\n')
+                symbol = line.rstrip('\n')
                 symbol = reverse_char_map.get(symbol, symbol)
                 vocab.add_symbol(symbol)
         return vocab
 
             
-=======
-        
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3

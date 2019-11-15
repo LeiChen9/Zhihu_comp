@@ -8,7 +8,38 @@ class Interface:
     """
     interface = Interface(self.args, self.log)
 
+    Attrs:
+        args
+        target_map: w2id & id2w
+        vocab
+        num_classes
+        num_vocab
+        padding
 
+    Funcs:
+        
+        __init__:
+            load args
+            build/load vocab and target map
+
+        load_embeddings
+
+        pre_process: filter text < max_len, sort by len, make_batch
+
+        process_sample: 
+            return processed
+                processed['text']: id-like words
+                processed['len']
+                processed['target']
+
+        shuffle_batch
+
+        make_batch
+
+        padding: pad 0
+
+        post_process: turn prob to idx. Return final_prediction
+            
     """
     def __init__(self, args, log=None):
         self.args = args 
@@ -36,15 +67,15 @@ class Interface:
                                         lower=args.lower_case, min_df=self.args.min_df, log=log,
                                         pretrained_embeddings=args.pretrained_embeddings,
                                         dump_filtered=os.path.join(args.output_dir, 'filtered_words.txt'))
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             self.vocab.save(vocab_file)
         else:
             self.target_map = Indexer.load(target_map_file)
             self.vocab = Vocab.load(vocab_file)
         args.num_classes = len(self.target_map)
         args.num_vocab = len(self.vocab)
-        args.padding = Vocab.pad()
-        pdb.set_trace()
+        args.padding = Vocab.pad()  # 0
+        
 
     def load_embeddings(self):
         '''generate embeddings suited for the current vocab or load previously cached ones.'''

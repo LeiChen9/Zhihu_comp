@@ -14,7 +14,6 @@ class Object:
 
 def parse(config_file):
     '''
-<<<<<<< HEAD
     Parse config file and return a list of tuples of objects which holds training parameters as attributes
 
     Args:
@@ -37,11 +36,6 @@ def parse(config_file):
                         'tensorboard', 'tolerance_samples', 'watch_metrics']
 
                 tuple[1]:dict    file info
-=======
-    configs: list of tuples
-                tuple[0]:obj
-                tuple[1]:dict
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
                     e.g.{'name': 'benchmark-0', '__parents__': ['default', 'data/snli'], 
                         '__repeat__': 10, 'eval_file': 'test', '__index__': 0})
     '''
@@ -72,7 +66,6 @@ def parse(config_file):
 
 
 def _load_param(root, file: str):
-<<<<<<< HEAD
     """
     Turn a json5 file to a dict, grab key and values in json5
 
@@ -82,8 +75,6 @@ def _load_param(root, file: str):
     Returns:
         dict
     """
-=======
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
     file = os.path.join(root, file)
     if not file.endswith('.json5'):
         file += '.json5'
@@ -92,7 +83,6 @@ def _load_param(root, file: str):
         return config
 
 def _parse_args(root, config):
-<<<<<<< HEAD
     """
     get the param of json5 file in a hiearchy way
     
@@ -106,11 +96,7 @@ def _parse_args(root, config):
     args = Object()
     assert type(config) is dict
     parents = config.get('__parents__', []) 
-=======
-    args = Object()
-    assert type(config) is dict
-    parents = config.get('__parents__', [])
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
+
     for parent in parents:
         parent = _load_param(root, parent)
         assert type(parent) is dict, 'only top-level configs can be a sequence'
@@ -121,7 +107,6 @@ def _parse_args(root, config):
 
 
 def _add_param(args, x:dict):
-<<<<<<< HEAD
     """
     Add params to the args obj as attributes
 
@@ -138,14 +123,6 @@ def _add_param(args, x:dict):
         else:
             k = _validate_param(k)  # k mush be an valid name
             if hasattr(args, k):  # if the args already has the attr, attr can only be overwritten when the types are the same
-=======
-    for k, v in x.items():
-        if type(v) is dict:
-            _add_param(args, v)
-        else:
-            k = _validate_param(k)
-            if hasattr(args, k):  # 判断对象有没有该属性
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
                 previous_type = type(getattr(args, k))
                 current_type = type(v)
                 assert previous_type is current_type or (isinstance(None, previous_type)) or \
@@ -155,15 +132,12 @@ def _add_param(args, x:dict):
 
 
 def _validate_param(name):
-<<<<<<< HEAD
     """
     check the name is a vaild str name
 
     Args:
         str
     """
-=======
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
     name = name.replace('-', '_')
     if not str.isidentifier(name):
         raise ValueError(f'Invalid param name: {name}')
@@ -171,7 +145,6 @@ def _validate_param(name):
 
 
 def _post_process(args: Object):
-<<<<<<< HEAD
     """
     Output the ['data_dir', 'min_df', 'max_vocab', 'max_len', 'min_len', 'lower_case',
                     'pretrained_embeddings', 'embedding_mode'] to models/$dataset/data_config.json5
@@ -184,25 +157,14 @@ def _post_process(args: Object):
     if not args.output_dir.startswith('models'):
         args.output_dir = os.path.join('models', args.output_dir)
     os.makedirs(args.output_dir, exist_ok=True)  # e.g. models/snli
-=======
-    if not args.output_dir.startswith('models'):
-        args.output_dir = os.path.join('models', args.output_dir)
-    os.makedirs(args.output_dir, exist_ok=True)
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
     if not args.name:
         args.name = str(datetime.now())
     args.summary_dir = os.path.join(args.output_dir, args.name)
     if os.path.exists(args.summary_dir):
         shutil.rmtree(args.summary_dir)
-<<<<<<< HEAD
     os.makedirs(args.summary_dir)  # e.g. models/snli/benchmark-0
-    data_config_file = os.path.join(args.output_dir, 'data_config.json5')
+    data_config_file = os.path.join(args.output_dir, 'data_config.json5')        
     if os.path.exists(data_config_file):  # already has the config file in dir
-=======
-    os.makedirs(args.summary_dir)
-    data_config_file = os.path.join(args.output_dir, 'data_config.json5')
-    if os.path.exists(data_config_file):
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
         with open(data_config_file) as f:
             config = json5.load(f)
             for k, v in config.items():
@@ -215,12 +177,7 @@ def _post_process(args: Object):
             keys = ['data_dir', 'min_df', 'max_vocab', 'max_len', 'min_len', 'lower_case',
                     'pretrained_embeddings', 'embedding_mode']
             json5.dump({k:getattr(args, k) for k in keys}, f)
-    
-<<<<<<< HEAD
     args.metric = args.metric.lower()  # grab evaluation metric
-=======
-    args.metric = args.metric.lower()
->>>>>>> 36da86d01011ec8a19186ae5b4d2228c8f7bb4c3
     args.watch_metrics = [m.lower() for m in args.watch_metrics]
     if args.metric not in args.watch_metrics:
         args.watch_metrics.append(args.metric)
@@ -245,3 +202,15 @@ def _post_process(args: Object):
         args.lr_warmup_steps = samples2steps(args.lr_warmup_samples)
     if not hasattr(args, 'lr_decay_steps'):
         args.lr_decay_steps = samples2steps(args.lr_decay_samples)
+
+def validate_params(args):
+    """
+    validate params after interface initialization
+    """
+    assert args.num_classes == 2 or ('f1' not in args.watch_metrics and 'auc' not in args.watch_metrics), \
+        f'F1 and AUC are only valid for 2 classes.'
+    
+    assert args.num_classes == 2 or 'ranking' not in args.watch_metrics, \
+        f'ranking metrics are only valid for 2 classes'
+    
+    assert args.num_vocab > 0 

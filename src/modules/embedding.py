@@ -1,6 +1,9 @@
 import tensorflow as tf 
 
 class Embedding:
+    """
+    Turn a word into vector through looking up 'embedding_matrix''
+    """
     def __init__(self, args):
         super().__init__()
         self.args = args 

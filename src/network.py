@@ -9,18 +9,32 @@ from .modules.prediction import registry as prediction
 
 
 class Network:
+    """
+    Constructed by the RE2 archiecture
+
+    Attrs:
+        embedding
+        blocks
+        connection
+        prediction
+    """
     def __init__(self, args):
         self.embedding = Embedding(args)
         self.blocks = [{
-            'encoder': Enconder(args),
-            'alignment': alignment[args.alignment](args),
-            'fusion': fusion[args.fusion](args),
+            'encoder': Encoder(args),
+            'alignment': alignment[args.alignment](args),  # linear
+            'fusion': fusion[args.fusion](args),  # full
         } for _ in range(args.blocks)]
-        self.connection = connection[args.connection]
+        self.connection = connection[args.connection]  # 'aug'
+        """
+        aug connection:
+            if the block is the first block: concat res and x
+            otherwise: just add former half of res is embedding
+        """
         self.pooling = pooling
         self.prediction = prediction[args.prediction](args)
 
-    def __call__(self, a, b, mask_a, mask_b, dropout_keep_prob):
+    def __call__(self, a, b, mask_a, mask_b, dropout_keep_prob):  # Make the network can be used like a function
         a = self.embedding(a, dropout_keep_prob)
         b = self.embedding(b, dropout_keep_prob)
         res_a, res_b = a, b
@@ -28,12 +42,12 @@ class Network:
         for i, block in enumerate(self.blocks):
             with tf.variable_scope('block-{}'.format(i), reuse=tf.AUTO_REUSE):
                 if i > 0:
-                    a = self.connection(a, res_a, i)
+                    a = self.connection(a, res_a, i)  # embedding_vec + residual vec
                     b = self.connection(b, res_b, i)
                     res_a, res_b = a, b 
-                a_enc = block['encoder'](a, mask_a, dropout_keep_prob)
+                a_enc = block['encoder'](a, mask_a, dropout_keep_prob)  # mask * x and conv1d
                 b_enc = block['encoder'](b, mask_b, dropout_keep_prob)
-                a = tf.concat([a, a_enc], axis=-1)
+                a = tf.concat([a, a_enc], axis=-1)  # 3 parts: original point-wise features, previous aligned features, contextual features
                 b = tf.concat([b, b_enc], axis=-1)
                 align_a, align_b = block['alignment'](a, b, mask_a, mask_b. dropout_keep_prob)
                 a = block['fusion'](a, align_a, dropout_keep_prob)
