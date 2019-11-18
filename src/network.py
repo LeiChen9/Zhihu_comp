@@ -12,7 +12,7 @@ class Network:
     def __init__(self, args):
         self.embedding = Embedding(args)
         self.blocks = [{
-            'encoder': Enconder(args),
+            'encoder': Encoder(args),
             'alignment': alignment[args.alignment](args),  # linear
             'fusion': fusion[args.fusion](args),  # full
         } for _ in range(args.blocks)]
@@ -35,7 +35,7 @@ class Network:
                 b_enc = block['encoder'](b, mask_b, dropout_keep_prob)
                 a = tf.concat([a, a_enc], axis=-1)
                 b = tf.concat([b, b_enc], axis=-1)
-                align_a, align_b = block['alignment'](a, b, mask_a, mask_b. dropout_keep_prob)
+                align_a, align_b = block['alignment'](a, b, mask_a, mask_b, dropout_keep_prob)
                 a = block['fusion'](a, align_a, dropout_keep_prob)
                 b = block['fusion'](b, align_b, dropout_keep_prob)
         

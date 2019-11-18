@@ -34,7 +34,7 @@ class Model:
 
     def __init__(self, args, session, updates=None):
         self.args = args
-        self.session = session
+        self.sess = session
 
         # updates
         if not updates:
@@ -72,7 +72,7 @@ class Model:
         q1 = tf.split(self.q1, splits)
         q2 = tf.split(self.q2, splits)
         q1_mask = tf.split(q1_mask, splits)
-        q2_mask = tf.split(q1_mask, splits)
+        q2_mask = tf.split(q2_mask, splits)
         y = tf.split(self.y, splits)
 
         # network
@@ -143,8 +143,8 @@ class Model:
         
         logits = tf.concat(tower_logits, 0)
         self.prob = tf.nn.softmax(logits, dim=1, name='prob')
-        self.pred = tf.argmax(input=logits, aixs=1, name='pred')
-        self.loss = tf.identify(loss, name='loss')
+        self.pred = tf.argmax(input=logits, axis=1, name='pred')
+        self.loss = tf.identity(loss, name='loss')
         summaries.append(tf.summary.scalar('training/lr', lr))
         summaries.append(tf.summary.scalar('training/gnomr', self.gnorm))
         summaries.append(tf.summary.scalar('training/loss', self.loss))

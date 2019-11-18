@@ -24,5 +24,5 @@ def augmented_residual(x, res, i):
     elif i > 1:
         hidden_size = int(x.shape[-1])
         x = (res[:, :, -hidden_size:] + x) * math.sqrt(0.5)
-        x = tf.concat([res[:, :, -hidden_size], x], axis=-1)  # former half of res is embedding
+        x = tf.concat([res[:, :, :-hidden_size], x], axis=-1)  # former half of res is embedding
     return x
